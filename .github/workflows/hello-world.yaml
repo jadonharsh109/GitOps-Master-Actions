@@ -1,0 +1,14 @@
+name: "Hello World"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  initial-actions:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Printing
+        run: echo "GitOps initialted"
+        shell: bash
