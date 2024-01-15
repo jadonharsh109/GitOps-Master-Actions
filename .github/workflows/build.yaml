@@ -25,13 +25,22 @@ jobs:
           java-version: 11
       - name: Build and analyze
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=actions
 
-      - name: Check Quality Gate
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      - name: Wait for Quality Gate
         run: |
-          timeout 5m mvn org.sonarsource.scanner.maven:sonar-maven-plugin:check -Dsonar.projectKey=actions
+          echo "Waiting for SonarQube analysis to complete and quality gate status..."
+          status=""
+          until [ "$status" == "SUCCESS" ] || [ "$status" == "ERROR" ]; do
+            sleep 30
+            status=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=actions" | jq -r '.projectStatus.status')
+            echo "Quality gate status: $status"
+          done
+          if [ "$status" == "ERROR" ]; then
+            echo "SonarQube quality gate check failed."
+            exit 1
+          fi
+          echo "SonarQube quality gate check passed."
