@@ -1,5 +1,5 @@
 # Name of the GitHub Actions workflow
-name: "Build & Code Test"
+name: "Deploy to Staging"
 
 # Trigger events for the workflow
 on:
