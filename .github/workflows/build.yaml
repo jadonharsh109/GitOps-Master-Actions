@@ -21,3 +21,9 @@ jobs:
 
       - name: Printing Events Data
         run: echo '${{ toJson(github.event) }}'
+
+      - name: Setup Maven Action
+        uses: s4u/setup-maven-action@v1.11.0
+
+      - name: Maven Build & Test
+        uses: mvn install
