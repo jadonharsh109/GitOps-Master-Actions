@@ -34,7 +34,7 @@ jobs:
         run: |
           echo "Waiting for SonarQube analysis to complete and quality gate status..."
           status=""
-          until [ "$status" == "SUCCESS" ] || [ "$status" == "ERROR" ]; do
+          until [ "$status" == "OK" ] || [ "$status" == "ERROR" ]; do
             sleep 30
             status=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" "${{ secrets.SONAR_HOST_URL }}/api/qualitygates/project_status?projectKey=actions" | jq -r '.projectStatus.status')
             echo "Quality gate status: $status"
