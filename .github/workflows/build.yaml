@@ -6,9 +6,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "src/**"
   pull_request:
     branches:
       - main
+    paths:
+      - "src/**"
   workflow_dispatch: # Allow manual triggering of the workflow
 
 ############ Define the jobs for the workflow ############
