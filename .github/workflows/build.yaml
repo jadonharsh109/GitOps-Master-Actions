@@ -1,0 +1,23 @@
+name: "Build & Code Test"
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Initial-Actions:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./src
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+
+      - name: Printing Events Data
+        run: echo '${{ github.event }}'
