@@ -17,7 +17,10 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: terraform/staging
     steps:
+      - uses: actions/checkout@v3
+
       - name: Verify Pull Request Number
         uses: actions/github-script@v5
         id: verify_pr_number
@@ -38,3 +41,26 @@ jobs:
                 console.log("PR ref: " + response.data.head.ref);
                 return response.data.head.ref;
             }
+
+      - name: terraform init
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform fmt
+        id: fmt
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Init
+        id: init
+        run: terraform init
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
