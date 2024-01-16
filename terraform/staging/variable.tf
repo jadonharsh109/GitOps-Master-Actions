@@ -19,3 +19,6 @@ variable "ami_id" {
   type    = string
   default = "ami-0c7217cdde317cfec"
 }
+variable "private_key" {
+  type = string
+}

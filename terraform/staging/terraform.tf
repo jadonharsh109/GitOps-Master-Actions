@@ -17,7 +17,7 @@ resource "aws_instance" "first-instance" {
     host        = self.public_ip
     user        = "ubuntu"
     type        = "ssh"
-    private_key = file("${path.module}/key.pem")
+    private_key = var.private_key
   }
 
   provisioner "remote-exec" {
