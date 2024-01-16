@@ -1,0 +1,6 @@
+# Terraform Configuration
+.terraform
+*.lock.hcl
+*.tfstate*
+*.tfvars
+*.pem
