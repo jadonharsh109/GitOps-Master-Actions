@@ -4,14 +4,13 @@ FROM maven:3.8.6-openjdk-11-slim as BUILD_IMAGE
 # Set the working directory
 WORKDIR /app
 
-# Update package lists and install Git
-RUN apt update && apt install git -y 
-
 # Clone the application repository
-RUN git clone https://github.com/jadonharsh109/GitOps-Master-Actions
+# RUN git clone https://github.com/jadonharsh109/GitOps-Master-Actions
+
+COPY . .
 
 # Build the application using Maven
-RUN cd GitOps-Master-Actions && mvn install 
+RUN mvn install 
 
 # Stage 2: Create the runtime image with Tomcat
 FROM tomcat:9-jre11
@@ -30,7 +29,7 @@ FROM tomcat:9-jre11
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copy the built WAR file from the build stage
-COPY --from=BUILD_IMAGE /app/GitOps-Master-Actions/target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=BUILD_IMAGE /app/target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war
 
 # Define the default command to start Tomcat
 CMD ["catalina.sh", "run"]

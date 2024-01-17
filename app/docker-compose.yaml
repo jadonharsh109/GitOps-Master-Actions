@@ -2,7 +2,7 @@ version: "3.9"
 services:
   db01:
     container_name: db01
-    build: db/.
+    build: dockerfiles/db/.
     ports:
       - "3306:3306"
     volumes:
@@ -13,7 +13,7 @@ services:
       - db01
       - mc01
       - rmq01
-    build: app/.
+    build: .
     ports:
       - "8080:8080"
   web01:
@@ -21,7 +21,7 @@ services:
       - app01
     restart: always
     container_name: web01
-    build: web/.
+    build: dockerfiles/web/.
     ports:
       - "80:80"
   mc01:
