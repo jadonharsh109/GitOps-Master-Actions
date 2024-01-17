@@ -18,6 +18,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: app
     steps:
       ###### Step 1: Checkout the repository ######
       - uses: actions/checkout@v2
