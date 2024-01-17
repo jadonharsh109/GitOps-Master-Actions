@@ -30,7 +30,7 @@ FROM tomcat:9-jre11
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copy the built WAR file from the build stage
-COPY --from=BUILD_IMAGE /app/Dock-pro/target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war
+COPY --from=BUILD_IMAGE /app/GitOps-Master-Actions/target/vprofile-v2.war /usr/local/tomcat/webapps/ROOT.war
 
 # Define the default command to start Tomcat
 CMD ["catalina.sh", "run"]
