@@ -17,7 +17,6 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: terraform/staging
     steps:
       - uses: actions/checkout@v3
 
@@ -49,10 +48,13 @@ jobs:
 
       - name: Terraform Init
         id: init
+        working-directory: terraform/staging
         run: terraform init
+      
 
       - name: Terraform Plan
         id: plan
+        working-directory: terraform/staging
         run: terraform plan -no-color -var instance_name="${{ github.event.inputs.PR_number }}"
         continue-on-error: true
 
@@ -89,10 +91,12 @@ jobs:
 
       - name: Terraform Apply
         id: apply
+        working-directory: terraform/staging
         run: terraform apply -var instance_name="${{ github.event.inputs.PR_number }}" -auto-approve
 
       - name: Terraform Output
         id: apply_output
+        working-directory: terraform/staging
         run: terraform output -raw -no-color Public_IP
 
 
@@ -112,6 +116,42 @@ jobs:
             </details>
   
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+  
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.inputs.PR_number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: rsync deployments
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: -avzr --delete
+          path: ./Dockerfiles
+          remote_path: /home/ubuntu
+          remote_host: ${{ steps.apply_output.outputs.stdout }}
+          remote_user: ubuntu
+          remote_key: ${{ secrets.DEPLOY_KEY }}
+
+      - name: Execute SSH commmands on remote server
+        uses: JimCronqvist/action-ssh@master
+        with:
+          hosts: 'ubuntu@${{ steps.apply_output.outputs.stdout }}'
+          privateKey: ${{ secrets.DEPLOY_KEY }}
+          command: |
+            cd /home/ubuntu/Dockerfiles
+            docker compose up -d
+
+      - name: Update status
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Staging server created
+            > PR #${{ github.event.inputs.PR_number }} has been deployed successfully
+            
+            URL: http://${{ steps.apply_output.outputs.stdout }}`;
   
             github.rest.issues.createComment({
               issue_number: ${{ github.event.inputs.PR_number }},
