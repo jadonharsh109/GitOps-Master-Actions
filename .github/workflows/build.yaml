@@ -7,12 +7,12 @@ on:
     branches:
       - main
     paths:
-      - "src/**"
+      - "app/**"
   pull_request:
     branches:
       - main
     paths:
-      - "src/**"
+      - "app/**"
   workflow_dispatch: # Allow manual triggering of the workflow
 
 ############ Define the jobs for the workflow ############
@@ -23,6 +23,7 @@ jobs:
     defaults:
       run:
         shell: bash
+        working-directory: app
     steps:
       ###### Step 1: Checkout the repository ######
       - uses: actions/checkout@v2
