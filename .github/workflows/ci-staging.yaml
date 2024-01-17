@@ -1,5 +1,5 @@
 # Name of the GitHub Actions workflow
-name: "Deploy to CI Staging"
+name: "Deploy to CI Staging env"
 
 # Trigger events for the workflow
 on:
@@ -12,7 +12,7 @@ on:
 
 ############ Define the jobs for the workflow ############
 jobs:
-  create:
+  staging:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -42,25 +42,82 @@ jobs:
                 return response.data.head.ref;
             }
 
-      - name: terraform init
+      - name: terraform env setup
         uses: hashicorp/setup-terraform@v3
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
 
       - name: Terraform Init
         id: init
         run: terraform init
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
-
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform plan -no-color -var instance_name="${{ github.event.inputs.PR_number }}"
         continue-on-error: true
+
+      - name: Update Pull Request
+        uses: actions/github-script@v5
+        env:
+          PLAN: "Terraform\n${{ steps.plan.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+            #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+  
+            <details><summary>Show Plan</summary>
+  
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+  
+            </details>
+  
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+  
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.inputs.PR_number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -var instance_name="${{ github.event.inputs.PR_number }}" -auto-approve
+
+      - name: Terraform Output
+        id: apply_output
+        run: terraform output -raw -no-color Public_IP
+
+
+      - name: Update Pull Request Again
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Apply ⚙️\`${{ steps.apply_output.outcome }}\`
+  
+            <details><summary>Show IP Address</summary>
+  
+            \`\`\`\n
+            ${{ steps.apply_output.outputs.stdout }}
+            \`\`\`
+  
+            </details>
+  
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+  
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.inputs.PR_number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      
