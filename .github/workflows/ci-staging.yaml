@@ -1,5 +1,5 @@
 # Name of the GitHub Actions workflow
-name: "Deploy to CI Staging"
+name: "Deploy to CI Staging env"
 
 # Trigger events for the workflow
 on:
@@ -12,7 +12,7 @@ on:
 
 ############ Define the jobs for the workflow ############
 jobs:
-  create:
+  staging:
     runs-on: ubuntu-latest
     defaults:
       run:
