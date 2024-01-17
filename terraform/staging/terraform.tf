@@ -18,7 +18,7 @@ provider "aws" {
 
 resource "aws_instance" "first-instance" {
   ami                    = var.ami_id
-  instance_type          = "t2.micro"
+  instance_type          = "t2.large"
   key_name               = var.key_name
   vpc_security_group_ids = [var.vpc_security_group]
   tags = {
