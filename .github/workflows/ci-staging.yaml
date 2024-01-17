@@ -98,8 +98,6 @@ jobs:
 
       - name: Update Pull Request Again
         uses: actions/github-script@v5
-        env:
-          PLAN: "Public IP Address:-\n${{ steps.apply_output.outputs.stdout }}"
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
@@ -108,7 +106,7 @@ jobs:
             <details><summary>Show IP Address</summary>
   
             \`\`\`\n
-            ${process.env.PLAN}
+            ${{ steps.apply_output.outputs.stdout }}
             \`\`\`
   
             </details>
