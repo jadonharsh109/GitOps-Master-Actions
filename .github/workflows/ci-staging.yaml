@@ -82,3 +82,44 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -var instance_name="${{ github.event.inputs.PR_number ]}" -auto-approve
+
+      - name: Terraform Output
+        id: apply_output
+        run: terraform output -raw -no-color Public_IP
+
+
+      - name: Update Pull Request Again
+        uses: actions/github-script@v5
+        env:
+          PLAN: "Public IP Address:-\n${{ steps.apply_output.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const output = `#### Terraform Apply ⚙️\`${{ steps.apply_output.outcome }}\`
+  
+            <details><summary>Show IP Address</summary>
+  
+            \`\`\`\n
+            ${process.env.PLAN}
+            \`\`\`
+  
+            </details>
+  
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+  
+            github.rest.issues.createComment({
+              issue_number: ${{ github.event.inputs.PR_number }},
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })
+
+      
