@@ -50,7 +50,6 @@ jobs:
         id: init
         working-directory: terraform/staging
         run: terraform init
-      
 
       - name: Terraform Plan
         id: plan
@@ -67,17 +66,17 @@ jobs:
           script: |
             const output = `#### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-  
+
             <details><summary>Show Plan</summary>
-  
+
             \`\`\`\n
             ${process.env.PLAN}
             \`\`\`
-  
+
             </details>
-  
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-  
+
             github.rest.issues.createComment({
               issue_number: ${{ github.event.inputs.PR_number }},
               owner: context.repo.owner,
@@ -99,24 +98,23 @@ jobs:
         working-directory: terraform/staging
         run: terraform output -raw -no-color Public_IP
 
-
       - name: Update Pull Request Again
         uses: actions/github-script@v5
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const output = `#### Terraform Apply ⚙️\`${{ steps.apply_output.outcome }}\`
-  
+
             <details><summary>Show IP Address</summary>
-  
+
             \`\`\`\n
             ${{ steps.apply_output.outputs.stdout }}
             \`\`\`
-  
+
             </details>
-  
+
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
-  
+
             github.rest.issues.createComment({
               issue_number: ${{ github.event.inputs.PR_number }},
               owner: context.repo.owner,
@@ -128,7 +126,7 @@ jobs:
         uses: burnett01/rsync-deployments@6.0.0
         with:
           switches: -avzr --delete
-          path: ./Dockerfiles
+          path: ./app
           remote_path: /home/ubuntu
           remote_host: ${{ steps.apply_output.outputs.stdout }}
           remote_user: ubuntu
@@ -137,10 +135,10 @@ jobs:
       - name: Execute SSH commmands on remote server
         uses: JimCronqvist/action-ssh@master
         with:
-          hosts: 'ubuntu@${{ steps.apply_output.outputs.stdout }}'
+          hosts: "ubuntu@${{ steps.apply_output.outputs.stdout }}"
           privateKey: ${{ secrets.DEPLOY_KEY }}
           command: |
-            cd /home/ubuntu/Dockerfiles
+            cd /home/ubuntu/app
             docker compose up -d
 
       - name: Update status
@@ -150,14 +148,12 @@ jobs:
           script: |
             const output = `#### Staging server created
             > PR #${{ github.event.inputs.PR_number }} has been deployed successfully
-            
+
             URL: http://${{ steps.apply_output.outputs.stdout }}`;
-  
+
             github.rest.issues.createComment({
               issue_number: ${{ github.event.inputs.PR_number }},
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: output
             })
-
-      

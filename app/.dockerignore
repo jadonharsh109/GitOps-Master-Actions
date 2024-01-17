@@ -1,0 +1,6 @@
+.github
+dockerfiles
+terraform
+.gitignore
+docker-compose.yaml
+Dockerfile
