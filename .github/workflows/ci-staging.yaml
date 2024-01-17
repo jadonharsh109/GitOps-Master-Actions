@@ -12,7 +12,7 @@ on:
 
 ############ Define the jobs for the workflow ############
 jobs:
-  staging:
+  Creating-Staging:
     runs-on: ubuntu-latest
     defaults:
       run:
