@@ -41,4 +41,4 @@ jobs:
       - name: Terraform Destroy
         id: destroy
         working-directory: terraform/staging
-        run: terraform destroy -var instance_name="${{ github.event.pull_request.number }}" -auto-approve
+        run: terraform destroy -var instance_name="${{ github.event.pull_request.number }}" --auto-approve

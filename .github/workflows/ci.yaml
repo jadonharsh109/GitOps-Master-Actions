@@ -60,3 +60,13 @@ jobs:
       ###### Step 5: Packaging the Source Code ######
       - name: Packaging source code
         run: mvn package
+
+  Pre-Prod:
+    if: github.event_name == 'push' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Hello world
+        run: echo "hello world"
