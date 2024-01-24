@@ -1,5 +1,5 @@
 # Name of the GitHub Actions workflow
-name: "Deploy to CI Staging env"
+name: "Create Staging"
 
 # Trigger events for the workflow
 on:
@@ -20,6 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # Verify Pull Request Number
       - name: Verify Pull Request Number
         uses: actions/github-script@v5
         id: verify_pr_number
@@ -41,22 +42,26 @@ jobs:
                 return response.data.head.ref;
             }
 
+      # Terraform environment setup
       - name: terraform env setup
         uses: hashicorp/setup-terraform@v3
         with:
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+      # Terraform Initialization
       - name: Terraform Init
         id: init
         working-directory: terraform/staging
         run: terraform init
 
+      # Terraform Plan
       - name: Terraform Plan
         id: plan
         working-directory: terraform/staging
         run: terraform plan -no-color -var instance_name="${{ github.event.inputs.PR_number }}"
         continue-on-error: true
 
+      # Update Pull Request with Terraform Plan
       - name: Update Pull Request
         uses: actions/github-script@v5
         env:
@@ -84,20 +89,24 @@ jobs:
               body: output
             })
 
+      # Check if Terraform Plan failed, and exit if true
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
 
+      # Terraform Apply
       - name: Terraform Apply
         id: apply
         working-directory: terraform/staging
         run: terraform apply -var instance_name="${{ github.event.inputs.PR_number }}" -auto-approve
 
+      # Terraform Output
       - name: Terraform Output
         id: apply_output
         working-directory: terraform/staging
         run: terraform output -raw -no-color Public_IP
 
+      # Update Pull Request Again with Terraform Apply Output
       - name: Update Pull Request Again
         uses: actions/github-script@v5
         with:
@@ -122,17 +131,19 @@ jobs:
               body: output
             })
 
-      - name: rsync deployments
+      # Rsync deployments
+      - name: Data Transfer To CI Server
         uses: burnett01/rsync-deployments@6.0.0
         with:
           switches: -avzr --delete
           path: ./app
           remote_path: /home/ubuntu
-          remote_host: ${{ steps.apply_output.outputs.stdout }}
+          remote_host: ${{ steps.apply_output.outputs.stdout }} # IP Address of PUBLIC_IP
           remote_user: ubuntu
-          remote_key: ${{ secrets.DEPLOY_KEY }}
+          remote_key: ${{ secrets.DEPLOY_KEY }} # SSH key to login (ADD in Github Secrets)
 
-      - name: Execute SSH commmands on remote server
+      # Execute SSH commands on remote server
+      - name: Execute SSH commands on remote server
         uses: JimCronqvist/action-ssh@master
         with:
           hosts: "ubuntu@${{ steps.apply_output.outputs.stdout }}"
@@ -141,6 +152,7 @@ jobs:
             cd /home/ubuntu/app
             docker compose up -d
 
+      # Update status to PR
       - name: Update status
         uses: actions/github-script@v5
         with:
