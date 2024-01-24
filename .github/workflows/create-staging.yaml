@@ -98,7 +98,7 @@ jobs:
       - name: Terraform Apply
         id: apply
         working-directory: terraform/staging
-        run: terraform apply -var instance_name="${{ github.event.inputs.PR_number }}" -auto-approve
+        run: terraform apply -var instance_name="${{ github.event.inputs.PR_number }}" --auto-approve
 
       # Terraform Output
       - name: Terraform Output
