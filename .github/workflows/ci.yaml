@@ -6,14 +6,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "app/**"
   pull_request:
-    types: [closed]
+    types: [opened]
     branches: [main]
+    paths:
+      - "app/**"
 
 ############ Define the jobs for the workflow ############
 jobs:
   ###### Job for initial setup and actions ######
-  Initial-Actions:
+  CI-Actions:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -56,37 +60,3 @@ jobs:
       ###### Step 5: Packaging the Source Code ######
       - name: Packaging source code
         run: mvn package
-
-  Destroying-Staging:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-
-    steps:
-      - uses: actions/checkout@v2
-      
-      - name: Get PR details
-        run: |
-          echo "Pull Request Number: ${{ github.event.pull_request.number }}"
-          echo "Pull Request Title: ${{ github.event.pull_request.title }}"
-          echo "Merged By: ${{ github.event.pull_request.merged_by.login }}"
-          echo "Merged at: ${{ github.event.pull_request.merged_at }}"
-          echo "Base Branch: ${{ github.event.pull_request.base.ref }}"
-          echo "Head Branch: ${{ github.event.pull_request.head.ref }}"
-          echo "URL: ${{ github.event.pull_request.html_url }}"
-
-      - name: terraform env setup
-        uses: hashicorp/setup-terraform@v3
-        with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: Terraform Init
-        id: init
-        working-directory: terraform/staging
-        run: terraform init
-
-      - name: Terraform Destroy
-        id: destroy
-        working-directory: terraform/staging
-        run: terraform destroy -var instance_name="${{ github.event.pull_request.number }}" -auto-approve
