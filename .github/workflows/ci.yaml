@@ -3,15 +3,12 @@ name: "Build & Code Test"
 
 # Trigger events for the workflow
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'app/**'
-      
   pull_request:
-    types: [opened, synchronize]
-    branches: [main]
+    types: 
+      - opened
+      - closed
+    branches: 
+      - main
     paths:
       - 'app/**'  
 
@@ -63,7 +60,7 @@ jobs:
         run: mvn package
 
   Pre-Prod:
-    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -71,4 +68,3 @@ jobs:
     steps:
       - name: Hello world
         run: echo "hello world"
-
