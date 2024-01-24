@@ -4,6 +4,7 @@ FROM maven:3.8.6-openjdk-11-slim as BUILD_IMAGE
 # Set the working directory
 WORKDIR /app
 
+# Copying files
 COPY . .
 
 # Build the application using Maven
