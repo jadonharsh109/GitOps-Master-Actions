@@ -1,41 +1,55 @@
+# Specify the version of Docker Compose file
 version: "3.9"
+
+# Define the services that make up your application
 services:
+  # Service for the MySQL database
   db01:
     container_name: db01
-    build: dockerfiles/db/.
+    build: dockerfiles/db/. # Specify the Dockerfile location for building the image
     ports:
-      - "3306:3306"
+      - "3306:3306" # Map host port 3306 to container port 3306
     volumes:
-      - dbdata:/var/lib/mysql
+      - dbdata:/var/lib/mysql # Mount a volume for persistent data storage
+
+  # Service for the main application
   app01:
     container_name: app01
     depends_on:
-      - db01
-      - mc01
-      - rmq01
-    build: .
+      - db01 # Depend on the db01 service
+      - mc01 # Depend on the mc01 service
+      - rmq01 # Depend on the rmq01 service
+    build: . # Build the image using the current directory
     ports:
-      - "8080:8080"
+      - "8080:8080" # Map host port 8080 to container port 8080
+
+  # Service for the web component
   web01:
     depends_on:
-      - app01
-    restart: always
+      - app01 # Depend on the app01 service
+    restart: always # Restart the container always, regardless of the exit status
     container_name: web01
-    build: dockerfiles/web/.
+    build: dockerfiles/web/. # Specify the Dockerfile location for building the image
     ports:
-      - "80:80"
+      - "80:80" # Map host port 80 to container port 80
+
+  # Service for Memcached
   mc01:
     container_name: mc01
-    image: memcached:latest
+    image: memcached:latest # Use the latest Memcached image
     ports:
-      - "11211:11211"
+      - "11211:11211" # Map host port 11211 to container port 11211
+
+  # Service for RabbitMQ
   rmq01:
     container_name: rmq01
-    image: rabbitmq:latest
+    image: rabbitmq:latest # Use the latest RabbitMQ image
     ports:
-      - "5672:5672"
+      - "5672:5672" # Map host port 5672 to container port 5672
     environment:
-      RABBITMQ_DEFAULT_USER: "test"
-      RABBITMQ_DEFAULT_PASS: "test"
+      RABBITMQ_DEFAULT_USER: "test" # Set the default RabbitMQ username
+      RABBITMQ_DEFAULT_PASS: "test" # Set the default RabbitMQ password
+
+# Define volumes for data persistence
 volumes:
-  dbdata: {}
+  dbdata: {} # Define a named volume for the MySQL database data
