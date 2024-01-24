@@ -1,12 +1,19 @@
 # Name of the GitHub Actions workflow
 name: "Build & Code Test"
+
 # Trigger events for the workflow
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      
   pull_request:
     types: [opened, synchronize]
     branches: [main]
     paths:
-      - 'app/**'  # Trigger only for changes in the "app" directory
+      - 'app/**'  
 
 ############ Define the jobs for the workflow ############
 jobs:
