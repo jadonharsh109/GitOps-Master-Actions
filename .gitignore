@@ -3,4 +3,5 @@
 *.lock.hcl
 *.tfstate*
 *.tfvars
+# ssh key
 *.pem
