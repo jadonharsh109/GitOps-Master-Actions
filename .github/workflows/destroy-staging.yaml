@@ -3,9 +3,10 @@ name: "Destroy Staging Server"
 
 # Trigger events for the workflow
 on:
-  pull_request:
-    types: [synchronize]
-    branches: [main]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 ############ Define the jobs for the workflow ############
 jobs:
