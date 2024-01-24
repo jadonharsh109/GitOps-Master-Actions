@@ -4,7 +4,7 @@ name: "Destroy Staging Server"
 # Trigger events for the workflow
 on:
   pull_request:
-    types: [closed]
+    types: [synchronize]
     branches: [main]
 
 ############ Define the jobs for the workflow ############
