@@ -3,13 +3,10 @@ name: "Build & Code Test"
 
 # Trigger events for the workflow
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "app/**"
   pull_request:
-    types: [opened]
+    types: [closed]
+    branches: [main]
+  push:
     branches: [main]
     paths:
       - "app/**"
@@ -62,7 +59,7 @@ jobs:
         run: mvn package
 
   Pre-Prod:
-    if: (github.event_name == 'push' && github.ref == 'refs/heads/main' && startsWith(github.event.after, '0000000')) || (github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.base.ref == 'main' && contains(github.event.pull_request.changed_files, 'app/'))
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true || github.event_name == 'push'
     runs-on: ubuntu-latest
     defaults:
       run:
