@@ -24,7 +24,6 @@ FROM tomcat:9-jre11
 
 # # Switch to the non-root user for further actions
 # USER tom_usr
-# hello
 # Remove any existing webapps to avoid conflicts
 RUN rm -rf /usr/local/tomcat/webapps/*
 
