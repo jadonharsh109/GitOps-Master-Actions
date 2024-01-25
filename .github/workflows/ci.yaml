@@ -55,10 +55,6 @@ jobs:
           fi
           echo "SonarQube quality gate check passed."
 
-      ###### Step 5: Packaging the Source Code ######
-      - name: Packaging source code
-        run: mvn package
-
   Pre-Prod:
     if: github.event.pull_request.merged == true
     needs: CI-Actions
