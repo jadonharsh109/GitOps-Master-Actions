@@ -4,7 +4,7 @@ FROM maven:3.8.6-openjdk-11-slim as BUILD_IMAGE
 # Set the working directory
 WORKDIR /app
 
-# Copying files from host to docker container 
+# Copying files from host to docker container images
 COPY . .
 
 # Build the application using Maven
