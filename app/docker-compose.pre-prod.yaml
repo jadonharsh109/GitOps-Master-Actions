@@ -26,7 +26,7 @@ services:
   # Service for the web component
   web01:
     depends_on:
-      - app01 # Depend on the app01 service
+      - app01 # Depend on the app01 
     restart: always # Restart the container always, regardless of the exit status
     container_name: web01
     build: dockerfiles/web/. # Specify the Dockerfile location for building the image
