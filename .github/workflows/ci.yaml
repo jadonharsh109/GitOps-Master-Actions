@@ -103,7 +103,7 @@ jobs:
       # Terraform Output
       - name: Terraform Output
         id: apply_output
-        working-directory: terraform/staging
+        working-directory: terraform/pre-prod
         run: terraform output -raw -no-color Public_IP
 
       # Execute SSH commands on remote server
