@@ -36,7 +36,7 @@ resource "aws_instance" "pre-prod" {
 }
 
 output "Public_IP" {
-  value = aws_instance.first-instance.public_dns
+  value = aws_instance.pre-prod.public_dns
 }
 
 
