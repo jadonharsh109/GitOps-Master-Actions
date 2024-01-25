@@ -82,6 +82,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: app
-          file: ./Dockerfile
+          file: Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/vprofile:${{ github.event.pull_request.number }}
