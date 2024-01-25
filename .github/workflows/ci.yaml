@@ -83,4 +83,4 @@ jobs:
         with:
           context: app
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/vprofile:${{ github.event.pull_request.number }}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/vprofile:${{ github.event.pull_request.number }},${{ secrets.DOCKERHUB_USERNAME }}/vprofile:latest
