@@ -23,7 +23,7 @@ services:
     ports:
       - "80:8080" # Map host port 8080 to container port 8080
 
-  # Service for Memcached
+  # Service for Memcached server
   mc01:
     container_name: mc01
     image: memcached:latest # Use the latest Memcached image
