@@ -3,7 +3,7 @@ terraform {
     organization = "jadonharsh"
 
     workspaces {
-      name = "GitOps-Master-Actions"
+      name = "GitOps-Master-Actions-Pre-Prod"
     }
   }
 }
@@ -14,13 +14,13 @@ provider "aws" {
   region     = var.region
 }
 
-resource "aws_instance" "staging-instance" {
+resource "aws_instance" "pre-prod" {
   ami                    = var.ami_id
   instance_type          = "t2.large"
   key_name               = var.key_name
   vpc_security_group_ids = [var.vpc_security_group]
   tags = {
-    "Name" = var.instance_name
+    "Name" = "pre-prod"
   }
 
   connection {
@@ -35,10 +35,8 @@ resource "aws_instance" "staging-instance" {
   }
 }
 
-
-
 output "Public_IP" {
-  value = aws_instance.staging-instance.public_dns
+  value = aws_instance.first-instance.public_dns
 }
 
 

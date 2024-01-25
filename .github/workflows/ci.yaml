@@ -61,6 +61,7 @@ jobs:
 
   Pre-Prod:
     if: github.event.pull_request.merged == true
+    needs: CI-Actions
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -84,3 +85,38 @@ jobs:
           context: app
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/vprofile:${{ github.event.pull_request.number }},${{ secrets.DOCKERHUB_USERNAME }}/vprofile:latest
+
+      # Terraform environment setup
+      - name: terraform env setup
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      # Terraform Initialization
+      - name: Terraform Init
+        id: init
+        working-directory: terraform/staging
+        run: terraform init
+
+      # Terraform Apply
+      - name: Terraform Apply
+        id: apply
+        working-directory: terraform/pre-prod
+        run: terraform apply --auto-approve
+
+      # Terraform Output
+      - name: Terraform Output
+        id: apply_output
+        working-directory: terraform/staging
+        run: terraform output -raw -no-color Public_IP
+
+      # Execute SSH commands on remote server
+      - name: Execute SSH commands on remote server
+        uses: JimCronqvist/action-ssh@master
+        with:
+          hosts: "ubuntu@${{ steps.apply_output.outputs.stdout }}"
+          privateKey: ${{ secrets.DEPLOY_KEY }}
+          command: |
+            cd /home/ubuntu/
+            git clone https://github.com/jadonharsh109/GitOps-Master-Actions
+            docker compose -f GitOps-Master-Actions/app/docker-compose.pre-prod.yaml up -d --build
