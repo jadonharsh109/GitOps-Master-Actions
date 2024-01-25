@@ -19,7 +19,7 @@ services:
       - db01 # Depend on the db01 service
       - mc01 # Depend on the mc01 service
       - rmq01 # Depend on the rmq01 service
-    image: jadonharsh/vprofile:latest # Using latest image
+    image: jadonharsh/vprofile:latest # Using latest images
     ports:
       - "8080:8080" # Map host port 8080 to container port 8080
 
