@@ -31,7 +31,7 @@ resource "aws_instance" "staging-instance" {
   }
 
   provisioner "remote-exec" {
-    script = "./requirement.sh"
+    script = "./docker-setup.sh"
   }
 }
 
