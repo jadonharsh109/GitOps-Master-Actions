@@ -150,7 +150,7 @@ jobs:
           privateKey: ${{ secrets.DEPLOY_KEY }}
           command: |
             cd /home/ubuntu/app
-            docker compose up -d
+            docker compose -f docker-compose.staging.yaml up -d
 
       # Update status to PR
       - name: Update status
