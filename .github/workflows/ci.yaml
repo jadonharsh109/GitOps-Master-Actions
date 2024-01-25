@@ -115,4 +115,5 @@ jobs:
           command: |
             cd /home/ubuntu/
             git clone https://github.com/jadonharsh109/GitOps-Master-Actions
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/vprofile
             docker compose -f GitOps-Master-Actions/app/docker-compose.pre-prod.yaml up -d --build
