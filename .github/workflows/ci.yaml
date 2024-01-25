@@ -95,7 +95,7 @@ jobs:
       # Terraform Initialization
       - name: Terraform Init
         id: init
-        working-directory: terraform/staging
+        working-directory: terraform/pre-prod
         run: terraform init
 
       # Terraform Apply
