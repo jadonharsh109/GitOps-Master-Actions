@@ -13,7 +13,7 @@ RUN mvn install
 # Stage 2: Create the runtime image with Tomcat
 FROM tomcat:9-jre11
 
-# Remove any existing webapps to avoid conflicts
+# Remove any existing webapps to avoid conflict
 RUN rm -rf /usr/local/tomcat/webapps/*
 
 # Copy the built WAR file from the build stage
