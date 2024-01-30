@@ -1,4 +1,4 @@
-# Stage 1: Build the application using Maven tool
+# Stage 1: Build the application using Maven
 FROM maven:3.8.6-openjdk-11-slim as BUILD_IMAGE
 
 # Set the working directory
