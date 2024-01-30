@@ -86,7 +86,9 @@ jobs:
         uses: erzz/dockle-action@v1
         with:
           image: ${{ secrets.DOCKERHUB_USERNAME }}/vprofile:${{ github.event.pull_request.number }}
-
+          exit-code: 1
+          failure-threshold: fatal
+          
       # Terraform environment setup
       - name: terraform env setup
         uses: hashicorp/setup-terraform@v3
