@@ -29,7 +29,7 @@
                                 <img alt="Brand" src="${contextPath}/resources/Images/user/logo.png" width="30px" height="30px">
                             </a>
                             <a class="navbar-brand" href="#">Harsh Infotech</a>
-                            <i class="brand_network"><small><small>hkh* Network</small></small></i>
+                            <i class="brand_network"><small><small>DevOps Engineer</small></small></i>
                         </div>
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
