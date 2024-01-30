@@ -23,7 +23,7 @@ jobs:
         working-directory: app
     steps:
       ###### Step 1: Checkout the repository ######
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       ###### Step 2: Set up JDK 11 for the build ######
       - name: Set up JDK 11
@@ -81,6 +81,11 @@ jobs:
           context: app
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/vprofile:${{ github.event.pull_request.number }},${{ secrets.DOCKERHUB_USERNAME }}/vprofile:latest
+
+      - name: Run Dockle
+        uses: erzz/dockle-action@v1
+        with:
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/vprofile:${{ github.event.pull_request.number }}
 
       # Terraform environment setup
       - name: terraform env setup
