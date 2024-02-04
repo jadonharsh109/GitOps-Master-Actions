@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db01
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db01
+  template:
+    metadata:
+      labels:
+        app: db01
+    spec:
+      containers:
+      - name: db01
+        image: jadonharsh/vprofile-db:latest
+        ports:
+        - containerPort: 3306
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db01
+spec:
+  selector:
+    app: db01
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
