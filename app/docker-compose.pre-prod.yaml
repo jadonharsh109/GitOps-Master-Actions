@@ -6,7 +6,7 @@ services:
   # Service for the MySQL database
   db01:
     container_name: db01
-    build: dockerfiles/db/. # Specify the Dockerfile location for building the image
+    image: jadonharsh/vprofile-db:latest # Specify the Dockerfile location for building the image
     ports:
       - "3306:3306" # Map host port 3306 to container port 3306
     volumes:
@@ -26,7 +26,7 @@ services:
   # Service for the web component
   web01:
     depends_on:
-      - app01 # Depend on the app01 
+      - app01 # Depend on the app01
     restart: always # Restart the container always, regardless of the exit status
     container_name: web01
     build: dockerfiles/web/. # Specify the Dockerfile location for building the image
