@@ -18,6 +18,16 @@ spec:
         image: memcached:latest
         ports:
         - containerPort: 11211
+        readinessProbe:
+          tcpSocket:
+            port: 11211
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 11211
+          initialDelaySeconds: 15
+          periodSeconds: 10
 ---
 apiVersion: v1
 kind: Service

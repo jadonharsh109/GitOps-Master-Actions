@@ -1,31 +1,45 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
 metadata:
-  name: db01
+  name: ebs-sc
+provisioner: ebs.csi.aws.com  # EBS Volumes
+parameters:
+  type: gp2
+volumeBindingMode: WaitForFirstConsumer
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db01-statefulset
+  namespace: default
 spec:
-  replicas: 1
   selector:
     matchLabels:
-      app: db01
+      app: db01 # has to match .spec.template.metadata.labels
+  serviceName: "db01"
+  replicas: 1 # by default is 1
   template:
     metadata:
       labels:
-        app: db01
+        app: db01 # has to match .spec.selector.matchLabels
     spec:
       containers:
       - name: db01
-        image: jadonharsh/vprofile-db:latest
+        image: jadonharsh/vprofile-db
         ports:
         - containerPort: 3306
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: db01
-spec:
-  selector:
-    app: db01
-  ports:
-    - protocol: TCP
-      port: 3306
-      targetPort: 3306
+        volumeMounts:
+        - name: db-pvc
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: db-pvc
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 2Gi
+      storageClassName: ebs-sc
+

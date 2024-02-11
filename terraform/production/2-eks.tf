@@ -31,9 +31,9 @@ module "eks" {
   eks_managed_node_groups = {
     # General node group configuration
     general = {
-      desired_size = 1
+      desired_size = 2
       min_size     = 1
-      max_size     = 10
+      max_size     = 5
 
       # EC2 instance types and capacity type for the node group
       instance_types = ["t3.small"]
@@ -42,9 +42,9 @@ module "eks" {
 
     # Spot instance node group configuration
     spot = {
-      desired_size = 1
+      desired_size = 2
       min_size     = 1
-      max_size     = 10
+      max_size     = 5
 
       # Labels and taints for identifying and managing spot instances
       labels = {
