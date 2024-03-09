@@ -66,10 +66,14 @@ terraform {
   }
 }
 ```
-    
-## Tech Stack
 
-**Client:** React, Redux, TailwindCSS
+## Tools & Technologies
 
-**Server:** Node, Express
-
+- **AWS**: Cloud platform for hosting and running services.
+- **Terraform**: Infrastructure as Code tool to create and manage cloud resources.
+- **Docker**: Container platform for packaging and distributing applications.
+- **GitHub Actions**: Automation of workflows to build, test, and deploy your applications.
+- **Kubernetes**: Container orchestration system for managing application deployment.
+- **SonarQube**: Code quality and security tool.
+- **Dockle**: Container image linter for security best practices.
+- **ArgoCD**: Declarative continuous deployment tool for Kubernetes.
